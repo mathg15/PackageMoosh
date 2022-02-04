@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 class Layer:
-
+    # Définitions d'une couche
     def __init__(self, eps, mu, height):
         self.eps = eps
         self.mu = mu
@@ -14,7 +14,7 @@ class Layer:
 
 
 class Structure:
-
+    # Définition de la structure multicouches
     def __init__(self, *args):
         layer = args[0]
         for i in range(len(args) - 1):
@@ -29,7 +29,7 @@ class Structure:
 
 
 class Angular:
-
+    # Fonction Angular
     def __init__(self, structure, polarisation, lambda_):
         self.Eps, self.Mu, self.Height = structure
         self.polarisation = polarisation
@@ -138,15 +138,3 @@ class Angular:
         plt.grid(True)
         plt.show()
 
-
-Layer1 = Layer(1, 1, 100).layer()
-Layer2 = Layer(2, 1, 100).layer()
-
-structure = Structure(
-    Layer1,
-    Layer2
-).structure()
-
-print(structure)
-
-Angular(structure, 0, 600).angular()
