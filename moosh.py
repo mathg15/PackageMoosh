@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 
 class Layer:
@@ -34,7 +34,7 @@ class Angular:
         self.Eps, self.Mu, self.Height = structure
         self.polarisation = polarisation
         self.lambda_ = lambda_
-    
+
     def cascade(self, A, B):
         # On combine deux matrices de diffusion A et B en une seule matrice de diffusion (2*2) S
         t = 1 / (1 - B[0, 0] * A[1, 1])
@@ -42,9 +42,7 @@ class Angular:
                       [B[1, 0] * A[1, 0] * t, B[1, 1] + A[1, 1] * B[0, 1] * B[1, 0] * t]], dtype=complex)
         return S
 
-
     def coefficient(self, thetacoef, _lambda):
-
 
         # On considère que la première valeur de la hauteur est 0
         self.Height[0] = 0
@@ -53,7 +51,7 @@ class Angular:
         k0 = (2 * np.pi) / _lambda
 
         # g est la longeur de Type
-        g = len(Type)
+        g = len(self.Eps)
 
         if self.polarisation == 0:
             f = self.Eps
@@ -86,7 +84,7 @@ class Angular:
         # Cacul des matrices S
         for k in range(g - 1):
             # Matrice de diffusion des couches
-            t = np.exp(1j * gamma[k] * hauteur[k])
+            t = np.exp(1j * gamma[k] * self.Height[k])
             T[2 * k + 1] = np.array([[0, t], [t, 0]])
 
             # Matrice de diffusion d'interface
@@ -96,7 +94,7 @@ class Angular:
                             [(2 * b1) / (b1 + b2), (b2 - b1) / (b1 + b2)]]
 
         # Matrice de diffusion pour la dernière couche
-        t = np.exp(1j * gamma[g - 1] * hauteur[g - 1])
+        t = np.exp(1j * gamma[g - 1] * self.Height[g - 1])
         T[2 * g - 1] = [[0, t], [t, 0]]
 
         A = np.zeros((2 * g - 1, 2, 2), dtype=complex)
@@ -119,9 +117,8 @@ class Angular:
 
         return r, tr, Re, Tr
 
-    def angular(self, lambda__):
+    def angular(self):
 
-        
         rangeAngle = np.linspace(0, 90, 200)
 
         # Création des matrices
@@ -132,24 +129,24 @@ class Angular:
 
         for i in range(200):
             tht = rangeAngle[i]
-            a[i], b[i], c[i], d[i] = self.coefficient(tht, lambda__)
+            a[i], b[i], c[i], d[i] = self.coefficient(tht, self.lambda_)
 
-        plt.figure(1)
-        plt.subplot(211)
-        plt.title(f"Reflection for lambda = {lambda__}")
+        plt.title(f"Reflection for lambda = {self.lambda_} nm")
         plt.plot(rangeAngle, abs(c))
-        plt.plot(1, reflectMin)
         plt.ylabel("Reflection")
         plt.xlabel("Angle (degrees)")
         plt.grid(True)
-        plt.subplot(212)
-        plt.plot(rangeAngle, np.angle(a))
-        plt.ylabel("Phase")
-        plt.xlabel("Angle")
-        plt.title("Phase of the reflection coefficient")
-        plt.tight_layout()
         plt.show()
 
-    def __str__(self):
-        
-        self.angular(self.lambda__)
+
+Layer1 = Layer(1, 1, 100).layer()
+Layer2 = Layer(2, 1, 100).layer()
+
+structure = Structure(
+    Layer1,
+    Layer2
+).structure()
+
+print(structure)
+
+Angular(structure, 0, 600).angular()
