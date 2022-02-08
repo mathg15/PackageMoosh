@@ -59,23 +59,18 @@ class RandomStructure:
         return epsStruc, muStruc, heightStruc
 
 
-class Bragg:
+def StructureBragg(periods):
+    Eps = np.tile([1, 2], (1, periods))
+    Eps = np.insert(Eps, 0, 1)
+    Eps = np.append(Eps, 1)
 
-    def __init__(self, periods):
-        self.periods = periods
+    Mu = np.ones((2 * periods + 2))
 
-    def strucutreBragg(self):
-        Eps = np.tile([1, 2], (1, self.periods))
-        Eps = np.insert(Eps, 0, 1)
-        Eps = np.append(Eps, 1)
+    Height = np.tile([600 / np.sqrt(2), 600 / (4 * 2)], (1, periods))
+    Height = np.insert(Height, 0, 1600)
+    Height = np.append(Height, 100)
 
-        Mu = np.ones((2 * self.periods + 2))
-
-        Height = np.tile([600 / np.sqrt(2), 600 / (4 * 2)], (1, self.periods))
-        Height = np.insert(Height, 0, 1600)
-        Height = np.append(Height, 100)
-
-        return Eps, Mu, Height
+    return Eps, Mu, Height
 
 
 class Reflection:
